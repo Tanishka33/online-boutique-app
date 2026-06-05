@@ -1,0 +1,31 @@
+trigger:
+  branches:
+    include:
+      - test
+
+pool:
+  vmImage: laptop-agent
+
+steps:
+
+- checkout: self
+
+- script: |
+    echo "Pipeline Started"
+
+    pwd
+
+    ls -la
+
+  displayName: 'Verify Repository'
+
+- script: |
+
+    if [ -d "src" ]; then
+      echo "Application found"
+    else
+      echo "Application missing"
+      exit 1
+    fi
+
+  displayName: 'Validate Structure'
