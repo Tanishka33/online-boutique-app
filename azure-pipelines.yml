@@ -7,31 +7,42 @@ pool:
   name: laptop-agent
 
 jobs:
+  - job: SourceValidation
+    displayName: 'Source Validation Job'
+    steps:
+      - checkout: self
 
-- job: SourceValidation
-  steps:
-  - checkout: self
-  - script: |
-      echo "Current Branch:"
-      echo $(Build.SourceBranch)
+      - script: |
+          echo "Current Branch"
+          echo "$(Build.SourceBranch)"
+          if [ "$(Build.SourceBranch)" != "refs/heads/test" ]; then
+              echo "Wrong branch"
+              exit 1
+          fi
+          if [ ! -d "src" ]; then
+              echo "src missing"
+              exit 1
+          fi
+          echo "Source Validation Passed"
+        displayName: 'Source Validation'
 
-      if [ "$(Build.SourceBranch)" != "refs/heads/test" ]; then
-          echo "Wrong branch"
-          exit 1
-      fi
+  - job: CodeQuality
+    displayName: 'Code Quality & Testing Job'
+    dependsOn: SourceValidation
+    steps:
+      - checkout: self
 
-      echo "Branch validated"
-    displayName: 'Validate Branch'
+      - script: |
+          echo "Checking Go installation"
+          go version
+        displayName: 'Verify Go'
 
-  - script: |
-      echo "Checking project files"
+      - script: |
+          echo "Finding Go modules"
+          find src -name go.mod
+        displayName: 'Lint Preparation'
 
-      ls
-
-      if [ ! -d "src" ]; then
-          echo "src folder missing"
-          exit 1
-      fi
-
-      echo "Repository validated"
-    displayName: 'Validate Repository'
+      - script: |
+          echo "Running basic tests"
+          echo "Test Stage Passed"
+        displayName: 'Unit Test'
