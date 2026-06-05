@@ -40,8 +40,10 @@ jobs:
 
       - script: |
           cd src/frontend
-          golangci-lint run || true
-          echo "Lint report collected"
+          golangci-lint run > lint-report.txt || true
+          cat lint-report.txt
+          ISSUES=$(wc -l < lint-report.txt)
+          echo "Issues found: $ISSUES"
         displayName: 'Run Lint'
 
       - script: |
