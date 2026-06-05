@@ -33,16 +33,22 @@ jobs:
       - checkout: self
 
       - script: |
-          echo "Checking Go installation"
+          echo "Checking tools"
           go version
-        displayName: 'Verify Go'
+          golangci-lint --version
+        displayName: 'Verify Tools'
 
       - script: |
-          echo "Finding Go modules"
-          find src -name go.mod
-        displayName: 'Lint Preparation'
+          cd src/frontend
+          golangci-lint run
+        displayName: 'Run Lint'
 
       - script: |
-          echo "Running basic tests"
-          echo "Test Stage Passed"
-        displayName: 'Unit Test'
+          cd src/frontend
+          go test ./...
+        displayName: 'Run Unit Test'
+
+      - script: |
+          cd src/frontend
+          go test -cover ./...
+        displayName: 'Generate Coverage'
