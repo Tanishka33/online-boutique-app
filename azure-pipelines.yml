@@ -4,14 +4,14 @@ trigger:
       - test
 
 pool:
-  vmImage: ubuntu-latest
+  name: laptop-agent
 
 steps:
 
 - checkout: self
 
 - script: |
-    echo "Pipeline Started"
+    echo "Pipeline started"
 
     pwd
 
@@ -20,12 +20,13 @@ steps:
   displayName: 'Verify Repository'
 
 - script: |
+    echo "Checking application structure"
 
     if [ -d "src" ]; then
-      echo "Application found"
+      echo "src exists"
     else
-      echo "Application missing"
+      echo "src missing"
       exit 1
     fi
 
-  displayName: 'Validate Structure'
+  displayName: 'Validate Project'
