@@ -6,27 +6,32 @@ trigger:
 pool:
   name: laptop-agent
 
-steps:
+jobs:
 
-- checkout: self
+- job: SourceValidation
+  steps:
+  - checkout: self
+  - script: |
+      echo "Current Branch:"
+      echo $(Build.SourceBranch)
 
-- script: |
-    echo "Pipeline started"
+      if [ "$(Build.SourceBranch)" != "refs/heads/test" ]; then
+          echo "Wrong branch"
+          exit 1
+      fi
 
-    pwd
+      echo "Branch validated"
+    displayName: 'Validate Branch'
 
-    ls -la
+  - script: |
+      echo "Checking project files"
 
-  displayName: 'Verify Repository'
+      ls
 
-- script: |
-    echo "Checking application structure"
+      if [ ! -d "src" ]; then
+          echo "src folder missing"
+          exit 1
+      fi
 
-    if [ -d "src" ]; then
-      echo "src exists"
-    else
-      echo "src missing"
-      exit 1
-    fi
-
-  displayName: 'Validate Project'
+      echo "Repository validated"
+    displayName: 'Validate Repository'
