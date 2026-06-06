@@ -72,17 +72,22 @@ jobs:
           cliSources: '.'
           extraProperties: |
             sonar.sources=src/frontend,src/checkoutservice,src/productcatalogservice,src/shippingservice
+            sonar.verbose=true
 
       - script: |
-          echo "Starting SAST compilation check"
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
+          echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
+          echo "##vso[task.setvariable variable=PATH]$PATH"
+          
+          echo "Starting SAST compilation compilation check..."
           cd src/frontend
           go test ./...
-        displayName: 'Prepare Scan'
+        displayName: 'Prepare Environment'
 
       - task: SonarQubeAnalyze@8
         env:
           JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-          PATH: /usr/lib/jvm/java-17-openjdk-amd64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
       - task: SonarQubePublish@8
         inputs:
