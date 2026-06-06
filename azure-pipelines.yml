@@ -72,15 +72,17 @@ jobs:
           cliSources: '.'
           extraProperties: |
             sonar.sources=src/frontend,src/checkoutservice,src/productcatalogservice,src/shippingservice
-            sonar.verbose=true
+            sonar.pullrequest.branch=
+            sonar.pullrequest.base=
+            sonar.branch.name=
+            sonar.scm.disabled=true
 
       - script: |
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
           export PATH=$JAVA_HOME/bin:$PATH
           echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
-          echo "##vso[task.setvariable variable=PATH]$PATH"
           
-          echo "Starting SAST compilation compilation check..."
+          echo "Starting SAST compilation check..."
           cd src/frontend
           go test ./...
         displayName: 'Prepare Environment'
