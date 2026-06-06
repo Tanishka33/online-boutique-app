@@ -79,6 +79,17 @@ jobs:
           go test ./...
         displayName: 'Prepare Scan'
 
+      - task: JavaToolInstaller@1
+        inputs:
+          versionSpec: '17'
+          jdkArchitectureOption: 'x64'
+          jdkSourceOption: 'PreInstalled'
+
+      - script: |
+          java -version
+          echo $JAVA_HOME
+        displayName: 'Verify Java'
+
       - task: SonarQubeAnalyze@8
 
       - task: SonarQubePublish@8
