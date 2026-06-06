@@ -55,3 +55,32 @@ jobs:
           cd src/frontend
           go test -cover ./...
         displayName: 'Generate Coverage'
+
+  - job: SAST
+    displayName: 'Static Application Security Testing'
+    dependsOn: CodeQuality
+    steps:
+      - checkout: self
+
+      - task: SonarQubePrepare@8
+        inputs:
+          SonarQube: 'sonarqube-local'
+          scannerMode: 'cli'
+          configMode: 'manual'
+          cliProjectKey: 'online-boutique'
+          cliProjectName: 'online-boutique'
+          cliSources: '.'
+          extraProperties: |
+            sonar.sources=src/frontend,src/checkoutservice,src/productcatalogservice,src/shippingservice
+
+      - script: |
+          echo "Starting SAST"
+          cd src/frontend
+          go test ./...
+        displayName: 'Prepare Scan'
+
+      - task: SonarQubeAnalyze@8
+
+      - task: SonarQubePublish@8
+        inputs:
+          pollingTimeoutSec: '300'
