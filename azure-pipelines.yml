@@ -72,6 +72,7 @@ jobs:
           cliSources: '.'
           extraProperties: |
             sonar.sources=src/frontend,src/checkoutservice,src/productcatalogservice,src/shippingservice
+            sonar.branch.name=
 
       - script: |
           echo "Starting SAST"
